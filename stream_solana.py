@@ -24,7 +24,8 @@ async def main():
             next_resp = await websocket.recv()
 
             for msg in next_resp:
-                process_transaction(msg)
+                transaction = process_transaction(msg)
+                print(f"Swap detected: {transaction}!")
 
 def process_transaction(log_response):
     if log_response.result.value.err is not None:
@@ -41,7 +42,8 @@ def process_transaction(log_response):
     
 
     if is_swap:
-        print(f"Swap detected {log_response.result.value.signature}!")
+        return log_response.result.value.signature
+
 
 
 asyncio.run(main())
