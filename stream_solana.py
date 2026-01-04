@@ -22,6 +22,26 @@ async def main():
         print("Listening for Raydium trades...")
         while True:
             next_resp = await websocket.recv()
-            print(next_resp)
+
+            for msg in next_resp:
+                process_transaction(msg)
+
+def process_transaction(log_response):
+    if log_response.result.value.err is not None:
+        return
+    
+    logs = log_response.result.value.logs
+
+    is_swap = False
+
+    for log in logs:
+        if "SwapBaseIn" in log or "SwapBaseOut" in log:
+            is_swap = True
+            break
+    
+
+    if is_swap:
+        print(f"Swap detected {log_response.result.value.signature}!")
+
 
 asyncio.run(main())
